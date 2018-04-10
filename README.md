@@ -18,8 +18,14 @@ bundle
 
 ## Running Rspec unit tests
 
+Run once:
 ```
 rake
+```
+
+Run on update using guard
+```
+guard
 ```
 
 ## Running IRB console

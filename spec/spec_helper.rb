@@ -103,3 +103,14 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 end
+
+RSpec::Matchers.define :have_attribute do |expected_attr|
+  match do |instance|
+    instance.respond_to?(expected_attr) &&
+      instance.respond_to?("#{expected_attr}=")
+  end
+
+  failure_message do |instance|
+    "expected #{instance} to have attribute #{expected_attr}"
+  end
+end
