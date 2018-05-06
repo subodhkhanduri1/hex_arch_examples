@@ -23,35 +23,15 @@ module Services
     end
 
     def check_items_selected
-      if request.items.nil? || request.items.empty?
-        return Errors::CreateOrder::ItemsNotSelectedError.new
-      end
+      ValidationRules::ItemSelected.new(request, unit_of_work).validate
     end
 
     def check_items_available
-      unavailable_items = []
-
-      request.items.each do |item|
-        if items[item.id].available_count < item.required_count
-          unavailable_items << item
-        end
-      end
-
-      return if unavailable_items.empty?
-
-      return Errors::CreateOrder::ItemsNotAvailableError.new(unavailable_items)
+      ValidationRules::ItemsAvailable.new(request, unit_of_work).validate
     end
 
     def items
-      @items ||= items_repository.find_all(item_ids)
-    end
-
-    def item_ids
-      @item_ids ||= request.items.map(&:id)
-    end
-
-    def items_repository
-      @items_repository ||= Persistence::Repository.for(Entities::Item)
+      @items ||= unit_of_work.items
     end
 
     def create_order
